@@ -1,0 +1,63 @@
+---
+sidebar_position: 4
+---
+
+This interface should be implemented by the merchant system for the callback purpose, to receive the order status and related payment information. When an order is paid successfully, mobile payment system will send a notification to the merchant server, the url of which is specified in preOrder interface (notify_url) by the merchant.
+
+## Interface Reponses
+|Parameter|Data Type|Description|
+|:----|:----|:----|
+|notify_url|String|string <= 512 characters|
+| | |Specifies the callback address for receiving payment notifications if payment is successful.|
+|appid|String|string <= 32 characters ^[A-Za-z0-9]+$|
+| | |Application ID allocated to a merchant by Mobile Payment system.|
+|notify_time|String|string <= 13 characters ^[0-9]*[1-9][0-9]*$|
+| | |Notification sending time. The timestamp is of the long type. The time is the UTC format. The unit is second.|
+|merch_code|String|string <= 16 characters ^[A-Za-z0-9]+$|
+| | |Short code registered by a merchant with the Mobile Money.|
+|merch_order_id|String|string <= 64 characters ^[A-Za-z0-9]+$|
+| | |Order ID on the merchant side.|
+|payment_order_id|String|string <= 64 characters|
+| | |Order ID on the Payment side.|
+|total_amount|String|string <= 20 characters ^((0{1}\.\d{1,2})|([1-9]\d*\.{1}\d{1,2})|([1-9]+\d*))$|
+| | |Order payment amount in a transaction.|
+|trans_currency|String|string <= 3 characters|
+| | |Transaction currency type.|
+|trade_status|String|String Transaction status.|
+| | |#Paying|
+| | |#The user(Business) has paid, but the cards and coupons and other transactions have been agreed paid|
+| | |#Expired|
+| | |#The status after reconciliation is not obvious|
+| | |Pending|
+| | |#Payment Completed|
+| | |Completed|
+| | |#Payment failed|
+| | |Failure|
+|trans_end_time|String| <= 13 characters ^[0-9]*[1-9][0-9]*$|
+| | |Time when a transaction ends. The unit is second.|
+| | |Callback information. If this parameter is transferred when a merchant places an order, the parameter is returned to the merchant during asynchronous notification.|
+|callback_info|String| |
+|sign|String|string <= 512 characters|
+| | |Response signature.|
+|sign_type|String|Value = "SHA256WithRSA"|
+| | |Signature type of the response|
+|trans_id|String|Transaction Id generated from the payment system.|
+## Sample Callback/Notify Response
+```
+{
+   notify_url: 'http://197.156.68.29:5050/v2/api/order-v2/mini/payment',
+   appid: '853694808089634',
+   notify_time: '1670575472482',
+   merch_code: '245445',
+   merch_order_id: '1670575560882',
+   payment_order_id: '00801104C911443200001002',
+   total_amount: '10.00',
+   trans_id:'49485948475845',
+   trans_currency: 'ETB',
+   trade_status: 'Completed',
+   trans_end_time: '1670575472000',
+   sign: 'AOwWQF0QDg0jzzs5otLYOunoR65GGgC3hyr+oYn8mm1Qph6Een7C…',
+   sign_type: 'SHA256WithRSA'
+}
+
+```
